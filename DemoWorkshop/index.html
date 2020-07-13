@@ -1,0 +1,104 @@
+<html>
+	<head>
+	<script src="./node_modules/web3/dist/web3.min.js"></script>
+</head>
+
+<body>
+    <div>
+        <input type="text" id="value">
+        <p id="getvalue"> </p>
+        <button id="set" >set</button>
+        <button id="get" >get</button>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+
+    <script>
+        var contract;
+        $(document).ready(function(){
+            web3= new Web3(web3.currentProvider);
+            var address="0x25f50b77aa1b03209cf0868e8df6bca37ac7fd46";
+            var abi=[
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "b",
+				"type": "uint256"
+			}
+		],
+		"name": "set",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "a",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "get",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+			contract= new web3.eth.Contract(abi, address)
+			
+            window.onload=function(){
+
+			
+			$("#set").click(function(){
+				var valu=0;
+				valu= parseInt($("#value").val());
+				web3.eth.getAccounts().then(function(accounts){
+					var acc= accounts[0];
+					return contract.methods.set(valu).send({from:acc});
+				}).then(function(tx){
+					console.log(tx);
+				}).catch(function(tx){
+					console.log(tx);
+				})
+
+			})
+
+			contract.methods.get().call(function(val){
+				$("#getvalue").html(val);
+			})
+		}
+		})
+	
+
+    </script>
+</body>
+
+
+</html>
