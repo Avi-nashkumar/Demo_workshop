@@ -11,19 +11,28 @@
         <button id="get" >get</button>
     </div>
     
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
 
     <script>
         var contract;
         $(document).ready(function(){
-            web3= new Web3(web3.currentProvider);
-            var address="0x25f50b77aa1b03209cf0868e8df6bca37ac7fd46";
-            var abi=[
+            if (typeof web3 !== 'undefined') 
+			{
+ 				web3 = new Web3(web3.currentProvider);
+			 } 
+			else 
+			{
+ 		// set the provider you want from Web3.providers
+				web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+ 			}
+			 web3.eth.defaultAccount = web3.eth.accounts[0];
+            
+			
+            var contract = new web3.eth.contract([
 	{
 		"constant": false,
 		"inputs": [
 			{
-				"internalType": "uint256",
 				"name": "b",
 				"type": "uint256"
 			}
@@ -31,7 +40,6 @@
 		"name": "set",
 		"outputs": [
 			{
-				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			}
@@ -46,7 +54,6 @@
 		"name": "a",
 		"outputs": [
 			{
-				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			}
@@ -61,7 +68,6 @@
 		"name": "get",
 		"outputs": [
 			{
-				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			}
@@ -70,8 +76,10 @@
 		"stateMutability": "view",
 		"type": "function"
 	}
-];
-			contract= new web3.eth.Contract(abi, address)
+]);
+
+			
+			var address = contract.at('0x692a70d2e424a56d2c6c27aa97d1a86395877b3a');
 			
             window.onload=function(){
 
@@ -79,21 +87,22 @@
 			$("#set").click(function(){
 				var valu=0;
 				valu= parseInt($("#value").val());
-				web3.eth.getAccounts().then(function(accounts){
-					var acc= accounts[0];
-					return contract.methods.set(valu).send({from:acc});
+				
+				 contract.set($("#value").val());
 				}).then(function(tx){
 					console.log(tx);
 				}).catch(function(tx){
 					console.log(tx);
-				})
+				
 
 			})
-
+			$("#set").click(function(){
 			contract.methods.get().call(function(val){
 				$("#getvalue").html(val);
 			})
+			})
 		}
+			
 		})
 	
 
